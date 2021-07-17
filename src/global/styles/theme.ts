@@ -2,7 +2,7 @@ export default {
     colors: {
         primary: '#5636d3',
 
-        secondary: '#ffb72c',
+        secondary: '#ff872c',
         secondary_light: 'rgba(255,135,44,0.3)',
 
         sucess: '#12a454',
