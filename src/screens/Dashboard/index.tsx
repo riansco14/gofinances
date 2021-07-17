@@ -1,6 +1,5 @@
 import React from 'react'
-import { Text } from 'react-native'
-import { Container, Header, Image, User, UserContainer, UserHello, UserInfo, UserName } from './styles'
+import { Container, Header, Icon, Image, User, UserContainer, UserHello, UserInfo, UserName } from './styles'
 
 export function Dashboard() {
     return (
@@ -19,6 +18,7 @@ export function Dashboard() {
 
                         </User>
                     </UserInfo>
+                    <Icon name="power" />
                 </UserContainer>
             </Header>
         </Container>
