@@ -1,11 +1,16 @@
 import React from 'react'
 import { Container, Title, Icon } from './styles'
 
-export function Select() {
+interface Props {
+    title?: string
+    onPress: () => void
+}
+
+export function Select({ title = "Categoria", onPress }: Props) {
     return (
-        <Container>
+        <Container onPress={onPress}>
             <Title>
-                Categoria
+                {title}
             </Title>
 
             <Icon name="chevron-down" />
