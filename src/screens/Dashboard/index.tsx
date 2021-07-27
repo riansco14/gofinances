@@ -1,7 +1,7 @@
 import React from 'react'
 import { HighlightCard } from '../../components/HighlightCard'
 import { Transaction, TransactionCard } from '../../components/TransactionCard'
-import { Container, Header, Icon, Image, User, UserContainer, UserHello, UserInfo, UserName, HighlightCardScroll, Transactions, Title, TransactionList } from './styles'
+import { Container, Header, Icon, Image, User, UserContainer, UserHello, UserInfo, UserName, HighlightCardScroll, Transactions, Title, TransactionList, LogoutButton } from './styles'
 
 export interface TransactionOverride extends Transaction{
     id: string
@@ -57,7 +57,9 @@ export function Dashboard() {
 
                         </User>
                     </UserInfo>
-                    <Icon name="power" />
+                    <LogoutButton onPress={()=>{}}>
+                        <Icon name="power" />
+                    </LogoutButton>
                 </UserContainer>
             </Header>
 
