@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, TouchableWithoutFeedback, Keyboard, Modal } from 'react-native'
 import { useForm } from 'react-hook-form'
 import * as Yup from "yup";
@@ -11,6 +11,10 @@ import { CategorySelect } from '../CategorySelect'
 import { Container, Header, Title, FormContainer, FieldsContainer, TransactionTypeContainer } from './styles'
 
 import { yupResolver } from '@hookform/resolvers/yup';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import uuid from 'react-native-uuid'
+import { useNavigation } from '@react-navigation/native';
+
 
 interface FormData {
     nome: string
@@ -25,6 +29,8 @@ const schema = Yup.object().shape({
 });
 
 export function Register() {
+    const dataKey = "@gofinances:transacaos"
+
     const [transactionType, setTransactionType] = useState('')
     const [category, setCategory] = useState({
         key: "",
@@ -34,10 +40,11 @@ export function Register() {
     })
     const [modalOpen, setModalOpen] = useState(false)
 
-    const { control, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
+    const navigation = useNavigation()
+    const { control, handleSubmit, reset, formState: { errors } } = useForm({ resolver: yupResolver(schema) });
 
 
-    function handleRegister(form: FormData) {
+    async function handleRegister(form: FormData) {
         if (!transactionType) {
             return Alert.alert("Selecione o tipo da transação")
         }
@@ -47,16 +54,57 @@ export function Register() {
         }
 
 
-        const data = {
+        const newData = {
+            id: String(uuid.v4()),
             nome: form.nome,
             preco: form.preco,
             transacaoTipo: transactionType,
-            categoria: category.name
+            categoria: category.name,
+            date: new Date()
         } as FormData
 
-        console.log(data);
+        try {
+
+            const oldCollection = await AsyncStorage.getItem(dataKey)
+
+            const currentData = oldCollection ? JSON.parse(oldCollection) : []
+            const data = [...currentData, newData]
+
+            const dataString = JSON.stringify(data)
+            await AsyncStorage.setItem(dataKey, dataString)
+
+            reset()
+            setCategory({
+                key: "",
+                name: "",
+                icon: "",
+                color: ""
+            })
+            setTransactionType('')
+
+            navigation.navigate("Listagem")
+
+        } catch (error) {
+            console.log(error);
+            Alert.alert("Não foi possível salvar")
+        }
 
     }
+
+    useEffect(() => {
+        async function loadAsyncStorage() {
+            const data = await AsyncStorage.getItem(dataKey)
+
+            console.log(JSON.parse(data!))
+        }
+
+        async function removeAll() {
+            await AsyncStorage.removeItem(dataKey)
+        }
+
+        //removeAll()
+        loadAsyncStorage()
+    }, [])
 
     function handleTransactionsTypeSelect(type: "up" | "down") {
         setTransactionType(type)
