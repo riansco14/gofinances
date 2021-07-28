@@ -1,16 +1,14 @@
 import React from 'react'
+import { categories } from '../../utils/categories'
 import { Container, Title, Preco, TransactionInfo, CategoriaContainer, Icon, CategoriaText, TransactionData } from './styles'
 
-interface CategoriaProps {
-    name: string
-    icon: string
-}
 
 export interface Transaction {
-    title: string
+    nome: string
     preco: string
-    categoria: CategoriaProps
-    data: string
+    categoriaKey: string
+    date: string
+    transacaoTipo: "up" | "down"
 }
 
 interface Props {
@@ -18,25 +16,26 @@ interface Props {
 }
 
 export function TransactionCard({ data }: Props) {
-    const type = data.preco.includes("-") ? "down" : "up"
-    
+    const categoriaFilter = categories.filter((item) => item.key === data.categoriaKey)[0]
+
     return (
         <Container>
             <Title>
-                {data.title}
+                {data.nome}
             </Title>
-            <Preco type={type}>
+            <Preco transacaoTipo={data.transacaoTipo}>
+                {data.transacaoTipo === "down" ? "- " : ""}
                 {data.preco}
             </Preco>
             <TransactionInfo>
                 <CategoriaContainer>
-                    <Icon name={data.categoria.icon} />
+                    <Icon name={categoriaFilter.icon} />
                     <CategoriaText>
-                        {data.categoria.name}
+                        {categoriaFilter.name}
                     </CategoriaText>
                 </CategoriaContainer>
 
-                <TransactionData>{data.data}</TransactionData>
+                <TransactionData>{data.date}</TransactionData>
             </TransactionInfo>
         </Container>
     )

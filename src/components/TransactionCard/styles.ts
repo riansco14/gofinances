@@ -3,6 +3,9 @@ import { RFValue } from "react-native-responsive-fontsize";
 import { Feather } from '@expo/vector-icons'
 import { Transaction } from ".";
 
+interface Props {
+    transacaoTipo: string 
+}
 
 export const Container = styled.View`
     background-color: ${({ theme }) => theme.colors.shape};
@@ -20,12 +23,12 @@ export const Title = styled.Text`
     margin-bottom: 2px;
 
 `
-export const Preco = styled.Text<Transaction>`
+export const Preco = styled.Text<Props>`
     font-family: ${({ theme }) => theme.fonts.regular};
     font-size: ${RFValue(20)}px;
     line-height: ${RFValue(30)}px;
     color: ${({ theme }) => theme.colors.sucess};
-    color: ${({ theme, type }) => type === 'up' ? theme.colors.sucess : theme.colors.attention};
+    color: ${({ theme, transacaoTipo }) => transacaoTipo === 'up' ? theme.colors.sucess : theme.colors.attention};
 
 
 `

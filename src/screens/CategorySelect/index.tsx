@@ -9,8 +9,6 @@ import { Button } from '../../components/Forms/Button'
 interface Category {
     key: string
     name: string
-    icon: string
-    color: string
 }
 
 interface Props {

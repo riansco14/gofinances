@@ -20,7 +20,7 @@ interface FormData {
     nome: string
     preco: string
     transacaoTipo: string
-    categoria: string
+    categoriaKey: string
 }
 
 const schema = Yup.object().shape({
@@ -34,9 +34,7 @@ export function Register() {
     const [transactionType, setTransactionType] = useState('')
     const [category, setCategory] = useState({
         key: "",
-        name: "",
-        icon: "",
-        color: ""
+        name: ""
     })
     const [modalOpen, setModalOpen] = useState(false)
 
@@ -59,7 +57,7 @@ export function Register() {
             nome: form.nome,
             preco: form.preco,
             transacaoTipo: transactionType,
-            categoria: category.name,
+            categoriaKey: category.key,
             date: new Date()
         } as FormData
 
@@ -76,9 +74,7 @@ export function Register() {
             reset()
             setCategory({
                 key: "",
-                name: "",
-                icon: "",
-                color: ""
+                name: ""
             })
             setTransactionType('')
 
@@ -148,7 +144,7 @@ export function Register() {
                             <TransactionTypeButton title="Income" type="down" isActive={transactionType === "down"} onPress={() => handleTransactionsTypeSelect("down")} />
                             <TransactionTypeButton title="Income" type="up" isActive={transactionType === "up"} onPress={() => handleTransactionsTypeSelect("up")} />
                         </TransactionTypeContainer>
-                        <Select title={category.name.length <= 0 ? "Categoria" : category.name} onPress={handleOpenModal} />
+                        <Select title={category.key.length <= 0 ? "Categoria" : category.name} onPress={handleOpenModal} />
                     </FieldsContainer>
 
 

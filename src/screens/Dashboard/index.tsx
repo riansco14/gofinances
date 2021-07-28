@@ -1,45 +1,56 @@
-import React from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import React, { useCallback, useState } from 'react'
+import { useFocusEffect } from '@react-navigation/native'
 import { HighlightCard } from '../../components/HighlightCard'
 import { Transaction, TransactionCard } from '../../components/TransactionCard'
+import { categories } from '../../utils/categories'
 import { Container, Header, Icon, Image, User, UserContainer, UserHello, UserInfo, UserName, HighlightCardScroll, Transactions, Title, TransactionList, LogoutButton } from './styles'
 
-export interface TransactionOverride extends Transaction{
+export interface TransactionOverride extends Transaction {
     id: string
 }
 
 export function Dashboard() {
-    const transactions = [{
-        id: '1',
-        title: "Desenvolvimento de site",
-        preco: "R$ 12.000,00",
-        categoria: {
-            name: "Vendas",
-            icon: "dollar-sign",
-        },
-        data: "13/04/2020",
-    },
-    {
-        id: '2',
-        title: "Hamburgueria Pizzy",
-        preco: "- R$ 59,00",
-        categoria: {
-            name: "Alimentação",
-            icon: "coffee",
-        },
-        data: "13/04/2020",
-    },
-    {
-        id: '3',
-        title: "Desenvolvimento de site",
-        preco: "R$ 12.000,00",
-        categoria: {
-            name: "Vendas",
-            icon: "shopping-bag",
-        },
-        data: "13/04/2020",
-    }
-    ] as TransactionOverride[]
+    const [data, setData] = useState<TransactionOverride[]>([])
 
+    async function loadTransacao() {
+        const dataKey = "@gofinances:transacaos"
+        const response = await AsyncStorage.getItem(dataKey)
+        const transacoes = response ? JSON.parse(response) : []
+
+        const transacoesFormatted: TransactionOverride[] = transacoes.map((item:TransactionOverride) => {
+            const preco = Number(item.preco).toLocaleString("pt-BR", {
+                currency: "BRL",
+                style: "currency"
+            })
+            
+            const dateFormatted = Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: '2-digit'
+            }).format(new Date(item.date))
+            
+            return {
+                id: item.id,
+                nome: item.nome,
+                preco: preco,
+                transacaoTipo: item.transacaoTipo,
+                categoriaKey: item.categoriaKey,
+                date: dateFormatted,
+            }
+
+        })
+        setData(transacoesFormatted) 
+    }
+    
+
+    useFocusEffect(
+        useCallback(
+            () => {
+                loadTransacao()
+            }, []
+        )
+    )
 
     return (
         <Container>
@@ -57,7 +68,7 @@ export function Dashboard() {
 
                         </User>
                     </UserInfo>
-                    <LogoutButton onPress={()=>{}}>
+                    <LogoutButton onPress={() => { }}>
                         <Icon name="power" />
                     </LogoutButton>
                 </UserContainer>
@@ -72,8 +83,8 @@ export function Dashboard() {
             <Transactions>
                 <Title>Listagem</Title>
                 <TransactionList
-                    data={transactions}
-                    keyExtractor={item=>item.id}
+                    data={data}
+                    keyExtractor={item => item.id}
                     renderItem={({ item }) => <TransactionCard data={item}
                     />}
                     showsVerticalScrollIndicator={false}

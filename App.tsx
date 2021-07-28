@@ -5,6 +5,9 @@ import 'react-native-gesture-handler';
 import { Dashboard } from './src/screens/Dashboard/';
 import theme from './src/global/styles/theme';
 
+import 'intl'
+import 'intl/locale-data/jsonp/pt-BR'
+
 import {
   useFonts,
   Poppins_400Regular,
