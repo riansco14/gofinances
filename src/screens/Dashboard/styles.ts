@@ -5,7 +5,11 @@ import { FlatList } from "react-native";
 import { TransactionOverride } from ".";
 import { BorderlessButton } from "react-native-gesture-handler";
 
-
+export const LoadingContainer = styled.View`
+    flex:1;
+    align-items: center;
+    justify-content: center;
+`
 export const Container = styled.View`
     flex: 1;
     background-color: ${({ theme }) => theme.colors.background};
