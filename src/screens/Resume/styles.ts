@@ -25,3 +25,9 @@ export const ContainerHistoryCard = styled.View`
     flex: 1;
     padding: 0px 24px;
 `
+
+export const GraphContainer = styled.View`
+    width: 100%;
+    align-items: center;
+
+`
