@@ -11,6 +11,8 @@ interface CategoriaProps {
     categoriaName: string
     color: string
     valorTotal: string
+    porcentagem: number
+    porcentagemFormatted: string
 }
 
 export function Resume() {
@@ -25,6 +27,12 @@ export function Resume() {
         let responseParsed = response ? JSON.parse(response) : []
         responseParsed = responseParsed.filter((item: TransactionOverride) => item.transacaoTipo === "down")
 
+        let somaTotalSaidas = 0
+
+        responseParsed.forEach((itemTransacao: TransactionOverride) => {
+            somaTotalSaidas += Number(itemTransacao.preco)
+        });
+
         const categoriasTemp: CategoriaProps[] = []
 
         categories.forEach((itemCategoria) => {
@@ -38,11 +46,17 @@ export function Resume() {
 
             const categoriaSomaFormatted = categoriaSoma.toLocaleString('pt-BR', { currency: 'BRL', style: 'currency' })
             if (categoriaSoma > 0) {
+                const porcentagem = (categoriaSoma / somaTotalSaidas) * 100
+                const porcentagemFormatted = porcentagem.toFixed(0) + "%"
+
+
                 categoriasTemp.push({
                     categoriaKey: itemCategoria.key,
                     categoriaName: itemCategoria.name,
                     color: itemCategoria.color,
                     valorTotal: categoriaSomaFormatted,
+                    porcentagem: porcentagem,
+                    porcentagemFormatted: porcentagemFormatted
                 })
             }
 
