@@ -1,13 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { VictoryPie } from 'victory-native'
 import { FlatList } from 'react-native'
-import { HistoryCard } from '../../components/HistoryCard'
 import { categories } from '../../utils/categories'
 import { TransactionOverride } from '../Dashboard'
-import { Container, Header, Title, ContainerHistoryCard, GraphContainer } from './styles'
+import { HistoryCard } from '../../components/HistoryCard'
+import { Container, Header, Title, ContainerHistoryCard, GraphContainer, MonthSelect, MonthSelectButton, SelectIcon, Month } from './styles'
 import theme from '../../global/styles/theme'
 import AppLoading from 'expo-app-loading'
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs'
+import { addMonths, subMonths } from 'date-fns/esm'
+import { format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { useFocusEffect } from '@react-navigation/native'
 
 interface CategoriaProps {
     categoriaKey: string
@@ -22,18 +27,32 @@ interface CategoriaProps {
 export function Resume() {
     const [isLoading, setIsLoading] = useState(true)
     const [categorias, setCategorias] = useState<CategoriaProps[]>({} as CategoriaProps[])
-    const [refreshing, setRefreshing] = useState(false)
+    const [selectedDate, setSelectedDate] = useState(new Date())
 
-    console.log(categorias);
+    const tabBarHeight = useBottomTabBarHeight();
 
-    async function loadData(refreshing = false) {
-        if (!refreshing)
-            setIsLoading(true)
-        setRefreshing(true)
+    function handleDateChange(action: 'next' | 'prev') {
+        if (action === 'next') {
+            const newDate = addMonths(selectedDate, 1)
+            setSelectedDate(newDate)
+        }
+        else {
+            const newDate = subMonths(selectedDate, 1)
+            setSelectedDate(newDate)
+        }
+
+    }
+    async function loadData() {
+        setIsLoading(true)
         const dataKey = "@gofinances:transacaos"
         const response = await AsyncStorage.getItem(dataKey)
         let responseParsed = response ? JSON.parse(response) : []
-        responseParsed = responseParsed.filter((item: TransactionOverride) => item.transacaoTipo === "down")
+        responseParsed = responseParsed.filter(
+            (item: TransactionOverride) =>
+                item.transacaoTipo === "down" &&
+                new Date(item.date).getMonth() === selectedDate.getMonth() &&
+                new Date(item.date).getFullYear() === selectedDate.getFullYear()
+        )
 
         let somaTotalSaidas = 0
 
@@ -72,18 +91,18 @@ export function Resume() {
         })
 
         setCategorias(categoriasTemp)
-        if (!refreshing)
-            setIsLoading(false)
-        setRefreshing(false)
+        setIsLoading(false)
     }
 
-    useEffect(() => {
-        loadData()
-    }, [])
+    useFocusEffect(useCallback(
+        () => {
+            loadData()
+        },
+        [selectedDate],
+    ))
 
-    if (isLoading) {
+    if (isLoading)
         return (<AppLoading />)
-    }
 
     return (
         <Container>
@@ -92,6 +111,19 @@ export function Resume() {
                     Resumo por categoria
                 </Title>
             </Header>
+            <MonthSelect>
+                <MonthSelectButton onPress={() => handleDateChange('prev')}>
+                    <SelectIcon name="chevron-left" />
+                </MonthSelectButton>
+
+                <Month>
+                    {format(selectedDate, 'MMMM,yyyy', { locale: ptBR })}
+                </Month>
+
+                <MonthSelectButton onPress={() => handleDateChange('next')}>
+                    <SelectIcon name="chevron-right" />
+                </MonthSelectButton>
+            </MonthSelect>
 
             <GraphContainer>
                 <VictoryPie
@@ -124,6 +156,7 @@ export function Resume() {
                     style={{ flex: 1 }}
                     data={categorias}
                     keyExtractor={(item: CategoriaProps) => item.categoriaKey}
+                    contentContainerStyle={{ paddingBottom: tabBarHeight }}
                     renderItem={({ item }: { item: CategoriaProps }) => (
                         <HistoryCard
                             title={item.categoriaName}
@@ -131,10 +164,10 @@ export function Resume() {
                             preco={String(item.valorTotalFormatted)}
                         />
                     )}
-                    onRefresh={() => loadData(true)}
-                    refreshing={refreshing}
+                //onRefresh={() => loadData(true)}
+                //refreshing={isLoading}
                 />
             </ContainerHistoryCard>
-        </Container>
+        </Container >
     )
 }
