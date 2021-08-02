@@ -35,25 +35,6 @@ export const SubTitle = styled.Text`
     margin-bottom: 60px;
 `
 
-export const ButtonContainer = styled.View`
-    width: 100%;
-    padding: 16px 18px;
-    background-color: ${({ theme }) => theme.colors.shape} ;
-
-    flex-direction: row;
-    justify-content: space-around;
-
-    border-radius: 6px;
-    margin: 0 24px;
-`
-
-export const ButtonTitle = styled.Text`
-    font-family: ${({ theme }) => theme.fonts.medium};
-    font-size: ${RFValue(14)}px;
-    color: ${({ theme }) => theme.colors.title} ;
-
-
-`
 
 export const Footer = styled.View`
     width: 100%;

@@ -1,12 +1,16 @@
 import React from 'react'
-import { Container, Header, TitleContainer, Title, SubTitle, ButtonContainer, ButtonTitle, Footer, FooterContainer } from './styles'
+import { Container, Header, TitleContainer, Title, SubTitle, Footer, FooterContainer } from './styles'
 
 import AppleSvg from '../../assets/apple.svg'
 import GoogleSvg from '../../assets/google-icon.svg'
 import LogoSvg from '../../assets/logo.svg'
 import { SignSocialButton } from '../../components/SignSocialButton'
+import { AuthContext, useAuth } from '../../hooks/AuthContext'
 
 export function SignIn() {
+    const data = useAuth()
+    console.log(data);
+    
     return (
         <Container>
             <Header>
