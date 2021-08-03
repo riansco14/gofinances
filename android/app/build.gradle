@@ -132,11 +132,12 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.gofinances"
+        applicationId "com.rian.gofinances"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [appAuthRedirectScheme: "com.rian.gofinances"]
     }
     splits {
         abi {
