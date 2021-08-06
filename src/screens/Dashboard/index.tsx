@@ -33,6 +33,7 @@ export function Dashboard() {
     const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
 
     const { user, signOutWithGoogle } = useAuth()
+    const dataKey = `@gofinances:transacaos_user:${user.id}`
 
     let entradasTotal = 0
     let saidasTotal = 0
@@ -48,7 +49,7 @@ export function Dashboard() {
         collection: TransactionOverride[],
     ) {
         if (collection.length <= 0)
-            return '-'
+            return 0
 
         const lastTransaction = new Date(
             Math.max.apply(Math, collection
@@ -74,7 +75,6 @@ export function Dashboard() {
     async function loadTransacao() {
         setIsLoading(true)
         resetValues()
-        const dataKey = "@gofinances:transacaos"
         const response = await AsyncStorage.getItem(dataKey)
         const transacoes = response ? JSON.parse(response) : []
         console.log(transacoes);
@@ -123,21 +123,21 @@ export function Dashboard() {
                     currency: "BRL",
                     style: "currency"
                 }),
-                ultimaTransacao: `Última entrada ${ultimaTransacaoEntrada}`
+                ultimaTransacao: ultimaTransacaoEntrada === 0 ? 'Não há transações' : `Última entrada ${ultimaTransacaoEntrada}`
             },
             saidas: {
                 valorTotal: saidasTotal.toLocaleString("pt-BR", {
                     currency: "BRL",
                     style: "currency"
                 }),
-                ultimaTransacao: `Última saída ${ultimaTransacaoSaida}`
+                ultimaTransacao: ultimaTransacaoSaida === 0 ? 'Não há transações' : `Última saída ${ultimaTransacaoSaida}`
             },
             total: {
                 valorTotal: somaTotal.toLocaleString("pt-BR", {
                     currency: "BRL",
                     style: "currency"
                 }),
-                ultimaTransacao: `01 a ${ultimaTransacaoSaida}`
+                ultimaTransacao: ultimaTransacaoSaida === 0 ? '' : `01 a ${ultimaTransacaoSaida}`
             }
 
         })

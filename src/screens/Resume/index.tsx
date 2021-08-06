@@ -13,6 +13,7 @@ import { addMonths, subMonths } from 'date-fns/esm'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useFocusEffect } from '@react-navigation/native'
+import { useAuth } from '../../hooks/AuthContext'
 
 interface CategoriaProps {
     categoriaKey: string
@@ -25,6 +26,9 @@ interface CategoriaProps {
 }
 
 export function Resume() {
+    const {user} = useAuth()
+    const dataKey = `@gofinances:transacaos_user:${user.id}`
+
     const [isLoading, setIsLoading] = useState(true)
     const [categorias, setCategorias] = useState<CategoriaProps[]>({} as CategoriaProps[])
     const [selectedDate, setSelectedDate] = useState(new Date())
@@ -44,7 +48,6 @@ export function Resume() {
     }
     async function loadData() {
         setIsLoading(true)
-        const dataKey = "@gofinances:transacaos"
         const response = await AsyncStorage.getItem(dataKey)
         let responseParsed = response ? JSON.parse(response) : []
         responseParsed = responseParsed.filter(

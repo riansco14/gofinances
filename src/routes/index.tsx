@@ -9,10 +9,10 @@ import { AppRoutes } from './app.routes'
 export function Routes() {
     const { user } = useAuth()
     console.log(user);
-    
+
     return (
         <NavigationContainer>
-            {user.id.length>0?<AppRoutes/>: <AuthRoutes />}
+            {user.id ? <AppRoutes /> : <AuthRoutes />}
         </NavigationContainer>
     )
 }

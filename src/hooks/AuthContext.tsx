@@ -22,11 +22,7 @@ interface AuthContextData {
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-    const [user, setUser] = useState({
-        id: "",
-        name: "",
-        email: ""
-    })
+    const [user, setUser] = useState({} as User)
 
     const userStorageKey = "@gofinances:user"
 
@@ -48,7 +44,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             }
             setuserStorageLoading(false)
         }
-        loadStorageDate
+        loadStorageDate()
     }, [])
 
     async function signInWithGoogle() {
