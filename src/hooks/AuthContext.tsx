@@ -1,5 +1,8 @@
-import React, { Context, createContext, ReactNode } from 'react'
-import { useContext } from 'react'
+import React, { createContext, useContext, ReactNode, useState, useEffect } from 'react'
+
+
+import * as GoogleSignIn from 'expo-google-sign-in';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const AuthContext = createContext({} as AuthContextData)
 
@@ -14,17 +17,68 @@ interface User {
 }
 interface AuthContextData {
     user: User
+    signInWithGoogle(): Promise<void>
+    signOutWithGoogle(): Promise<void>
 }
 
 function AuthProvider({ children }: AuthProviderProps) {
-    const user = {
-        id: '123',
-        name: 'Rian Teste',
-        email: 'riantal@gmail.com'
+    const [user, setUser] = useState({
+        id: "",
+        name: "",
+        email: ""
+    })
+
+    const userStorageKey = "@gofinances:user"
+
+    const [userStorageLoading, setuserStorageLoading] = useState(true)
+
+    async function signOutWithGoogle() {
+        await GoogleSignIn.signOutAsync()
+        setUser({} as User)
+        await AsyncStorage.removeItem("@gofinances:user")
     }
-    
+
+    useEffect(() => {
+        async function loadStorageDate() {
+
+            const userStoraged = await AsyncStorage.getItem(userStorageKey)
+            if (userStoraged) {
+                const userLogged = JSON.parse(userStoraged) as User
+                setUser(userLogged)
+            }
+            setuserStorageLoading(false)
+        }
+        loadStorageDate
+    }, [])
+
+    async function signInWithGoogle() {
+        try {
+            const { type, user } = await GoogleSignIn.signInAsync();
+            if (type === "success") {
+                const userLogged = {
+                    id: user?.uid,
+                    email: user?.email,
+                    name: user?.displayName,
+                    image: user?.photoURL
+                } as User
+
+                setUser(userLogged)
+                await AsyncStorage.setItem("@gofinances:user", JSON.stringify(userLogged))
+                //await AsyncStorage.setItem()
+                //console.log(user);
+            }
+
+        } catch ({ message }) {
+            alert('GoogleSignIn.initAsync(): ' + message);
+        }
+
+    }
+
+
+    //signInWithGoogle()
+
     return (
-        <AuthContext.Provider value={{ user }}>
+        <AuthContext.Provider value={{ user, signInWithGoogle, signOutWithGoogle }}>
             {children}
         </AuthContext.Provider>
     )
