@@ -6,6 +6,7 @@ import { Transaction, TransactionCard } from '../../components/TransactionCard'
 import { Container, Header, Icon, Image, User, UserContainer, UserHello, UserInfo, UserName, HighlightCardScroll, Transactions, Title, TransactionList, LogoutButton, LoadingContainer } from './styles'
 import { ActivityIndicator } from 'react-native'
 import theme from '../../global/styles/theme'
+import { useAuth } from '../../hooks/AuthContext'
 
 export interface TransactionOverride extends Transaction {
     id: string
@@ -30,6 +31,8 @@ export function Dashboard() {
     const [data, setData] = useState<TransactionOverride[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [highlightData, setHighlightData] = useState<HighlightDataProps>({} as HighlightDataProps)
+
+    const { user, signOutWithGoogle } = useAuth()
 
     let entradasTotal = 0
     let saidasTotal = 0
@@ -165,18 +168,18 @@ export function Dashboard() {
             <Header>
                 <UserContainer>
                     <UserInfo>
-                        <Image source={{ uri: "https://github.com/riansco14.png" }} />
+                        <Image source={{ uri: user.image }} />
                         <User>
                             <UserHello>
                                 Olá,
                             </UserHello>
                             <UserName>
-                                Rian
+                                {user.name}
                             </UserName>
 
                         </User>
                     </UserInfo>
-                    <LogoutButton onPress={() => { }}>
+                    <LogoutButton onPress={() => { signOutWithGoogle() }}>
                         <Icon name="power" />
                     </LogoutButton>
                 </UserContainer>
